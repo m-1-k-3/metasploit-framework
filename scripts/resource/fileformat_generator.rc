@@ -1,3 +1,6 @@
+# fileformat_generator.rc
+# Author: m-1-k-3 (Web: http://www.s3cur1ty.de / Twitter: @s3cur1ty_de)
+
 <ruby>
 if (framework.datastore['WIN_PAYL'] != nil)
 	winpayl = framework.datastore['WIN_PAYL']
