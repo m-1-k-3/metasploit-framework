@@ -69,7 +69,7 @@ module Metasploit3
 
     shellcode = shellcode + command_string + "\x00"
 
-    # we need to align it to 4 bytes
+    # we need to align our shellcode to 4 bytes
     (shellcode = shellcode + "\x00") while shellcode.length%4 != 0
 
     return super + shellcode
