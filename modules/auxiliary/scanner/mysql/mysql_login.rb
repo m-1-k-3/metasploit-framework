@@ -13,6 +13,7 @@ class MetasploitModule < Msf::Auxiliary
   include Msf::Auxiliary::Scanner
   include Msf::Sessions::CreateSessionOptions
   include Msf::Auxiliary::CommandShell
+  include Msf::Auxiliary::ReportSummary
 
   def initialize(info = {})
     super(update_info(info,
@@ -36,13 +37,13 @@ class MetasploitModule < Msf::Auxiliary
     register_options(
       [
         Opt::Proxies,
+        OptBool.new('CreateSession', [false, 'Create a new session for every successful login', false])
       ])
 
-    options_to_deregister = %w[PASSWORD_SPRAY]
     if framework.features.enabled?(Msf::FeatureManager::MYSQL_SESSION_TYPE)
       add_info('New in Metasploit 6.4 - The %grnCreateSession%clr option within this module can open an interactive session')
     else
-      options_to_deregister << 'CreateSession'
+      options_to_deregister = %w[CreateSession]
     end
     deregister_options(*options_to_deregister)
   end
@@ -65,7 +66,9 @@ class MetasploitModule < Msf::Auxiliary
     logins = results.flat_map { |_k, v| v[:successful_logins] }
     sessions = results.flat_map { |_k, v| v[:successful_sessions] }
     print_status("Bruteforce completed, #{logins.size} #{logins.size == 1 ? 'credential was' : 'credentials were'} successful.")
-    if datastore['CreateSession']
+    return results unless framework.features.enabled?(Msf::FeatureManager::MYSQL_SESSION_TYPE)
+
+    if create_session?
       print_status("#{sessions.size} MySQL #{sessions.size == 1 ? 'session was' : 'sessions were'} opened successfully.")
     else
       print_status('You can open an MySQL session with these credentials and %grnCreateSession%clr set to true')
@@ -82,9 +85,7 @@ class MetasploitModule < Msf::Auxiliary
         )
 
         scanner = Metasploit::Framework::LoginScanner::MySQL.new(
-            host: ip,
-            port: rport,
-            proxies: datastore['Proxies'],
+          configure_login_scanner(
             cred_details: cred_collection,
             stop_on_success: datastore['STOP_ON_SUCCESS'],
             bruteforce_speed: datastore['BRUTEFORCE_SPEED'],
@@ -100,6 +101,7 @@ class MetasploitModule < Msf::Auxiliary
             ssl_cipher: datastore['SSLCipher'],
             local_port: datastore['CPORT'],
             local_host: datastore['CHOST']
+          )
         )
 
         successful_logins = []
@@ -120,12 +122,11 @@ class MetasploitModule < Msf::Auxiliary
 
             if create_session?
               begin
-                mysql_client = result.proof
-                successful_sessions << session_setup(result, mysql_client)
+                successful_sessions << session_setup(result)
               rescue ::StandardError => e
-                elog('Failed: ', error: e)
-                print_error(e)
-                result.proof.conn.close if result.proof&.conn
+                elog('Failed to setup the session', error: e)
+                print_brute level: :error, ip: ip, msg: "Failed to setup the session - #{e.class} #{e.message}"
+                result.connection.close unless result.connection.nil?
               end
             end
           else
@@ -195,15 +196,12 @@ class MetasploitModule < Msf::Auxiliary
   end
 
   # @param [Metasploit::Framework::LoginScanner::Result] result
-  # @param [::Rex::Proto::MySQL::Client] client
   # @return [Msf::Sessions::MySQL]
-  def session_setup(result, client)
-    return unless (result && client)
+  def session_setup(result)
+    return unless (result.connection && result.proof)
 
-    rstream = client.socket || client.io
-
-    my_session = Msf::Sessions::MySQL.new(rstream, { client: client })
-    merging = {
+    my_session = Msf::Sessions::MySQL.new(result.connection, { client: result.proof, **result.proof.detect_platform_and_arch })
+    merge_me = {
       'USERPASS_FILE' => nil,
       'USER_FILE'     => nil,
       'PASS_FILE'     => nil,
@@ -211,6 +209,6 @@ class MetasploitModule < Msf::Auxiliary
       'PASSWORD'      => result.credential.private
     }
 
-    start_session(self, nil, merging, false, my_session.rstream, my_session)
+    start_session(self, nil, merge_me, false, my_session.rstream, my_session)
   end
 end

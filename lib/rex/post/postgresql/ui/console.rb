@@ -28,9 +28,9 @@ module Rex
             # The postgresql client context
             self.session = session
             self.client = session.client
-            prompt = "%undPostgreSQL @ #{client.conn.peerinfo} (#{current_database})%clr"
-            history_manager = Msf::Config.postgresql_session_history
-            super(prompt, '>', history_manager, nil, :postgresql)
+            prompt = "%undPostgreSQL @ #{client.peerinfo} (#{current_database})%clr"
+            history_file = Msf::Config.history_file_for_session_type(session_type: session.type, interactive: false)
+            super(prompt, '>', history_file, nil, :postgresql)
 
             # Queued commands array
             self.commands = []

@@ -297,6 +297,7 @@ class MsfAutoload
       'appapi' => 'AppApi',
       'uds_errors' => 'UDSErrors',
       'smb_hash_capture' => 'SMBHashCapture',
+      'rex_ntlm' => 'RexNTLM'
     }
   end
 
@@ -338,8 +339,11 @@ autoload :Faker, 'faker'
 autoload :BinData, 'bindata'
 autoload :RubySMB, 'ruby_smb'
 autoload :MetasploitPayloads, 'metasploit-payloads'
+autoload :PacketFu, 'packetfu'
 
 require 'rexml/document'
+# Load IO#expect moneypatch
+require 'expect'
 
 # XXX: Should be removed once the `lib/metasploit` folder is loaded by Zeitwerk
 require 'metasploit/framework/hashes'

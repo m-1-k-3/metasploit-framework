@@ -29,9 +29,9 @@ module Rex
             self.session = session
             self.client = session.client
             envchange = ::Rex::Proto::MSSQL::ClientMixin::ENVCHANGE
-            prompt = "%undMSSQL @ #{client.sock.peerinfo} (#{client.initial_info_for_envchange(envchange: envchange::DATABASE)[:new]})%clr"
-            history_manager = Msf::Config.mssql_session_history
-            super(prompt, '>', history_manager, nil, :mssql)
+            prompt = "%undMSSQL @ #{client.peerinfo} (#{client.initial_info_for_envchange(envchange: envchange::DATABASE)[:new]})%clr"
+            history_file = Msf::Config.history_file_for_session_type(session_type: session.type, interactive: false)
+            super(prompt, '>', history_file, nil, :mssql)
 
             # Queued commands array
             self.commands = []

@@ -69,14 +69,16 @@ module InteractiveSqlClient
   def _multiline_with_fallback
     name = session.type
     query = {}
+    history_file = Msf::Config.history_file_for_session_type(session_type: name, interactive: true)
+    return { status: :fail, errors: ["Unable to get history file for session type: #{name}"] } if history_file.nil?
 
     # Multiline (Reline) and fallback (Readline) have separate history contexts as they are two different libraries.
-    framework.history_manager.with_context(history_file: Msf::Config.send("#{name}_session_history_interactive"), name: name, input_library: :reline) do
+    framework.history_manager.with_context(history_file: history_file , name: name, input_library: :reline) do
       query = _multiline
     end
 
     if query[:status] == :fail
-      framework.history_manager.with_context(history_file: Msf::Config.send("#{name}_session_history_interactive"), name: name, input_library: :readline) do
+      framework.history_manager.with_context(history_file: history_file, name: name, input_library: :readline) do
         query = _fallback
       end
     end
@@ -169,7 +171,7 @@ module InteractiveSqlClient
       break if line.end_with? ';'
     end
 
-    { status: :success, result: line_buffer.join }
+    { status: :success, result: line_buffer.join(' ') }
   end
 
   attr_accessor :on_log_proc, :client_dispatcher

@@ -24,10 +24,9 @@ module Rex
             # The mysql client context
             self.session = session
             self.client = session.client
-            self.client.socket ||= self.client.io
-            prompt = "%undMySQL @ #{client.socket.peerinfo} (#{current_database})%clr"
-            history_manager = Msf::Config.mysql_session_history
-            super(prompt, '>', history_manager, nil, :mysql)
+            prompt = "%undMySQL @ #{client.peerinfo} (#{current_database})%clr"
+            history_file = Msf::Config.history_file_for_session_type(session_type: session.type, interactive: false)
+            super(prompt, '>', history_file, nil, :mysql)
 
             # Queued commands array
             self.commands = []

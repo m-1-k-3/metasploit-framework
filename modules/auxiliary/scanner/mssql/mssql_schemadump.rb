@@ -31,7 +31,7 @@ class MetasploitModule < Msf::Auxiliary
 
   def run_host(ip)
     if session
-      set_session(session.client)
+      set_mssql_session(session.client)
     else
       unless mssql_login_datastore
         print_error("#{datastore['RHOST']}:#{datastore['RPORT']} - Invalid SQL Server credentials")
@@ -49,7 +49,11 @@ class MetasploitModule < Msf::Auxiliary
 
     # Grab all the DB schema and save it as notes
     mssql_schema = get_mssql_schema
-    return nil if mssql_schema.nil? or mssql_schema.empty?
+    if mssql_schema.nil? or mssql_schema.empty?
+      print_good output if datastore['DISPLAY_RESULTS']
+      print_warning('No schema information found')
+      return nil
+    end
     mssql_schema.each do |db|
       report_note(
         :host  => mssql_client.peerhost,
