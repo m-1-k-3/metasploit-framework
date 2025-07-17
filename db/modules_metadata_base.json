@@ -80400,6 +80400,63 @@
     "session_types": false,
     "needs_cleanup": true
   },
+  "exploit_linux/http/pandora_fms_auth_netflow_rce": {
+    "name": "PandoraFMS Netflow Authenticated Remote Code Execution",
+    "fullname": "exploit/linux/http/pandora_fms_auth_netflow_rce",
+    "aliases": [],
+    "rank": 600,
+    "disclosure_date": "2025-12-30",
+    "type": "exploit",
+    "author": [
+      "msutovsky-r7"
+    ],
+    "description": "This module exploits a command injection vulnerability in Netflow component of PandoraFMS. The module requires a set of user credentials to modify Netflow settings. Also, Netflow binaries have to be present on the system.",
+    "references": [
+      "CVE-2025-5306"
+    ],
+    "platform": "Linux,Unix",
+    "arch": "cmd",
+    "rport": 80,
+    "autofilter_ports": [
+      80,
+      8080,
+      443,
+      8000,
+      8888,
+      8880,
+      8008,
+      3000,
+      8443
+    ],
+    "autofilter_services": [
+      "http",
+      "https"
+    ],
+    "targets": [
+      "Linux/Unix Command"
+    ],
+    "mod_time": "2025-07-04 08:54:30 +0000",
+    "path": "/modules/exploits/linux/http/pandora_fms_auth_netflow_rce.rb",
+    "is_install_path": true,
+    "ref_name": "linux/http/pandora_fms_auth_netflow_rce",
+    "check": true,
+    "post_auth": true,
+    "default_credential": false,
+    "notes": {
+      "Stability": [
+        "crash-safe"
+      ],
+      "Reliability": [
+        "repeatable-session"
+      ],
+      "SideEffects": [
+        "ioc-in-logs",
+        "config-changes"
+      ]
+    },
+    "session_types": false,
+    "needs_cleanup": null
+  },
   "exploit_linux/http/pandora_fms_auth_rce_cve_2024_11320": {
     "name": "Pandora FMS authenticated command injection leading to RCE via LDAP using default DB password",
     "fullname": "exploit/linux/http/pandora_fms_auth_rce_cve_2024_11320",
