@@ -24169,7 +24169,7 @@
       "Tyler Booth",
       "Hynek Petrak"
     ],
-    "description": "This module will gather passwords and password hashes from a target LDAP server via multiple techniques\n          including Windows LAPS.",
+    "description": "This module will gather passwords and password hashes from a target LDAP server via multiple techniques\n          including Windows LAPS. For best results, run with SSL because some attributes are only readable over\n          encrypted connections.",
     "references": [
       "URL-https://blog.xpnsec.com/lapsv2-internals/",
       "URL-https://github.com/fortra/impacket/blob/master/examples/GetLAPSPassword.py"
@@ -24180,7 +24180,7 @@
     "autofilter_ports": [],
     "autofilter_services": [],
     "targets": null,
-    "mod_time": "2025-04-07 15:21:08 +0000",
+    "mod_time": "2025-07-18 17:10:35 +0000",
     "path": "/modules/auxiliary/gather/ldap_passwords.rb",
     "is_install_path": true,
     "ref_name": "gather/ldap_passwords",
