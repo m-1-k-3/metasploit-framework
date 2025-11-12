@@ -183506,6 +183506,66 @@
     "session_types": false,
     "needs_cleanup": null
   },
+  "exploit_windows/http/wsus_deserialization_rce": {
+    "name": "Windows Server Update Service Deserialization Remote Code Execution",
+    "fullname": "exploit/windows/http/wsus_deserialization_rce",
+    "aliases": [],
+    "rank": 500,
+    "disclosure_date": "2025-10-14",
+    "type": "exploit",
+    "author": [
+      "mwulftange",
+      "msutovsky-r7"
+    ],
+    "description": "This module exploits deserialization vulnerability in legacy serialization mechanism in Windows Server Update Services (WSUS). The vulnerability allows unauthenticated attacker to create specially crafted event, which triggers unsafe deserialization upon server synchronization. The module does not require any other options and upon successful exploitation, the payload is executed in context of administrator.",
+    "references": [
+      "ATT&CK-T1190",
+      "URL-https://code-white.com/blog/wsus-cve-2025-59287-analysis/",
+      "CVE-2025-59287"
+    ],
+    "platform": "Windows",
+    "arch": "cmd",
+    "rport": "8530",
+    "autofilter_ports": [
+      80,
+      8080,
+      443,
+      8000,
+      8888,
+      8880,
+      8008,
+      3000,
+      8443
+    ],
+    "autofilter_services": [
+      "http",
+      "https"
+    ],
+    "targets": [
+      "Windows"
+    ],
+    "mod_time": "2025-11-10 18:32:13 +0000",
+    "path": "/modules/exploits/windows/http/wsus_deserialization_rce.rb",
+    "is_install_path": true,
+    "ref_name": "windows/http/wsus_deserialization_rce",
+    "check": true,
+    "post_auth": false,
+    "default_credential": false,
+    "notes": {
+      "Stability": [
+        "crash-service-restarts"
+      ],
+      "Reliability": [
+        "repeatable-session"
+      ],
+      "SideEffects": [
+        "ioc-in-logs",
+        "screen-effects"
+      ]
+    },
+    "session_types": false,
+    "needs_cleanup": null
+  },
   "exploit_windows/http/xampp_webdav_upload_php": {
     "name": "XAMPP WebDAV PHP Upload",
     "fullname": "exploit/windows/http/xampp_webdav_upload_php",
